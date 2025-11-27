@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyHotel - Mehmonxona Sayti</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- AOS Animation Library -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0; 
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #f8f8f8;
+    }
+
+    /* LOADING SCREEN */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s, visibility 0.5s;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #c19a6b;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* NAVBAR */
+    header {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      transition: all 0.3s ease;
+    }
+
+    header.scrolled {
+      background: rgba(0,0,0,0.95);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: .3s;
+    }
+
+    .nav-links a:hover {
+      color: #c19a6b;
+    }
+
+    .book-btn {
+      background: #c19a6b;
+      padding: 8px 15px;
+      border-radius: 5px;
+      color: #fff !important;
+    }
+
+    /* Mobile Menu Toggle */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 60px);
+        background: rgba(0,0,0,0.95);
+        flex-direction: column;
+        align-items: center;
+        padding-top: 50px;
+        transition: left 0.3s ease;
+      }
+
+      .nav-links.active {
+        left: 0;
+      }
+
+      .nav-links a {
+        font-size: 20px;
+        padding: 15px 0;    
+      }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920') no-repeat center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.45);
+    }
+
+    .hero-content {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .hero-content h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .hero-content h2 {
+      font-size: 64px;
+      font-weight: 700;
+      color: #f5deb3;
+    }
+
+
+    /* VIEWPOINTS */
+    .viewpoints {
+      padding: 80px 8%;
+      background: #f8f8f8;
+    }
+
+    .viewpoints h2 {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .viewpoints p {
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    .viewpoints .card {
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: .3s;
+      cursor: pointer;
+    }
+
+    .viewpoints .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .viewpoints img {
+      height: 250px;
+      object-fit: cover;
+    }
+
+    /* FACILITIES SECTION */
+    .facilities {
+      padding: 80px 8%;
+      background: #f8f8f8;
+    }
+
+    .facilities h2 {
+      text-align: center;
+      font-size: 42px;
+      margin-bottom: 50px;
+    }
+
+    .facility-item {
+      text-align: center;
+      padding: 30px;
+      background: #f8f8f8;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .facility-item:hover {
+      background: #c19a6b;
+      color: #fff;
+      transform: translateY(-5px);
+    }
+
+    .facility-item i {
+      font-size: 48px;
+      color: #c19a6b;
+      margin-bottom: 15px;
+    }
+
+    .facility-item:hover i {
+      color: #fff;
+    }
+
+    /* TESTIMONIALS */
+    .testimonials {
+      padding: 80px 8%;
+      background: #f8f8f8;
+    }
+
+    .testimonials h2 {
+      text-align: center;
+      font-size: 42px;
+      margin-bottom: 50px;
+    }
+
+    .testimonial-card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .testimonial-card .stars {
+      color: #ffc107;
+      margin-bottom: 10px;
+    }
+
+    .testimonial-card .author {
+      font-weight: 600;
+      color: #c19a6b;
+      margin-top: 15px;
+    }
+
+    /* ABOUT */
+    .about {
+      padding: 80px 8%;
+      background: #f8f8f8;
+    }
+
+    .about .heading {
+      text-align: center;
+      font-size: 42px;
+      margin-bottom: 50px;
+    }
+
+    .about .heading span {
+      color: #c19a6b;
+    }
+
+    .about .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .about img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .philosophy {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .philosophy-item {
+      flex: 1 1 45%;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+
+    .philosophy-item:hover {
+      transform: translateY(-6px);
+    }
+
+    .philosophy-item i {
+      font-size: 32px;
+      color: #c19a6b;
+      margin-bottom: 10px;
+    }
+
+    /* WHY US */
+    .why-us {
+      max-width: 900px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .why-us .card {
+      background: #fff;
+      padding: 25px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: .3s;
+    }
+
+    .why-us .card:hover {
+      transform: translateY(-6px);
+      color: #c19a6b;
+      box-shadow: 0 8px 25px rgba(193,154,107,0.4);
+    }
+
+    /* ROOMS CAROUSEL */
+    #rooms {
+      padding: 80px 8%;
+      background: #f8f8f8;
+    }
+
+    #rooms h2 {
+      text-align: center;
+      font-size: 42px;
+      margin-bottom: 50px;
+    }
+
+    #rooms .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .room-card {
+      background: #fff;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: 0.3s;
+      margin: 0 auto;
+      max-width: 600px;
+    }
+
+    .room-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .room-card img {
+      height: 280px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .room-card .card-body {
+      padding: 25px;
+      text-align: center;
+    }
+
+    .room-card h5 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .room-card .price {
+      font-size: 28px;
+      color: #c19a6b;
+      font-weight: 700;
+      margin: 15px 0;
+    }
+
+    .room-card .features {
+      margin: 15px 0;
+      color: #666;
+    }
+
+    .room-card .features i {
+      color: #c19a6b;
+      margin: 0 5px;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 50px;
+      height: 50px;
+      background: #c19a6b;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.8;
+    }
+
+    .carousel-control-prev:hover,
+    .carousel-control-next:hover {
+      opacity: 1;
+    }
+
+    .carousel-control-prev {
+      left: -25px;
+    }
+
+    .carousel-control-next {
+      right: -25px;
+    }
+
+    /* PRICE CALCULATOR */
+    .price-calculator {
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .price-calculator h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #c19a6b;
+    }
+
+    .price-result {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: #c19a6b;
+      margin-top: 20px;
+    }
+
+    /* CONTACT */
+    #contact {
+      background: #f8f8f8;
+      padding: 80px 8%;
+    }
+
+    #contact input, #contact textarea {
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .form-message {
+      display: none;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .form-message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .form-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* NEWSLETTER */
+    .newsletter {
+      background: linear-gradient(135deg, #c19a6b 0%, #8b7355 100%);
+      padding: 60px 8%;
+      text-align: center;
+      color: #fff;
+    }
+
+    .newsletter h3 {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+
+    .newsletter-form {
+      max-width: 500px;
+      margin: 20px auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .newsletter-form button {
+      padding: 12px 30px;
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .newsletter-form button:hover {
+      background: #000;
+    }
+
+    /* CHAT WIDGET */
+    .chat-widget {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+    }
+
+    .chat-button {
+      width: 60px;
+      height: 60px;
+      background: #c19a6b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+
+    .chat-button:hover {
+      background: #8b7355;
+      transform: scale(1.1);
+    }
+
+    .chat-box {
+      display: none;
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 300px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .chat-box.active {
+      display: block;
+    }
+
+    .chat-header {
+      background: #c19a6b;
+      color: #fff;
+      padding: 15px;
+      font-weight: 600;
+    }
+
+    .chat-messages {
+      padding: 20px;
+      height: 200px;
+      overflow-y: auto;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+    }
+
+    .chat-input button {
+      padding: 12px 20px;
+      background: #c19a6b;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* SCROLL TO TOP BUTTON */
+    .scroll-top {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      width: 50px;
+      height: 50px;
+      background: #c19a6b;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 999;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #222;
+      color: #ddd;
+      text-align: center;
+      padding: 20px;
+      margin-top: 60px;
+    }
+
+    /* IMAGE MODAL */
+    .modal-img {
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .modal-img:hover {
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .hero-content h1 { font-size: 28px; }
+      .hero-content h2 { font-size: 42px; }
+      .viewpoints h2, .about .heading, .facilities h2, .testimonials h2, #rooms h2 {
+        font-size: 32px;
+      }
+      
+      .carousel-control-prev,
+      .carousel-control-next {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+
+  <!-- HEADER -->
+  <header id="navbar">
+    <div class="nav-container">
+      <a href="#home" class="logo">MyHotel</a>
+      <button class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav class="nav-links" id="navLinks">
+        <a href="#home" onclick="closeMenu()">Bosh Sahifa</a>
+        <a href="#rooms" onclick="closeMenu()">Xonalar</a>
+        <a href="#about" onclick="closeMenu()">Haqimizda</a>
+        <a href="#contact" onclick="closeMenu()">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-overlay"></div>
+    <div class="hero-content" data-aos="fade-up">
+      <h1>Qulaylik va Komfort</h1>
+      <h2>Dunyosiga Xush Kelibsiz</h2>
+    </div>
+  </section>
+
+  <!-- VIEWPOINTS -->
+  <section class="viewpoints text-center" id="viewpoints">
+    <div class="container">
+      <h2 data-aos="fade-up">Mashhur Joylar</h2>
+      <p data-aos="fade-up">Mehmonxonamiz atrofidagi ajoyib joylarni kashf eting.</p>
+
+      <div class="row g-4">
+        <div class="col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="100">
+          <div class="card">
+            <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400" class="modal-img" onclick="openImageModal(this.src)">
+            <div class="card-body">
+              <h5>Sagrada Família</h5>
+              <p>Mehmonxonamiz yaqinidagi mashhur cherkov.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="200">
+          <div class="card">
+            <img src="https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=400" class="modal-img" onclick="openImageModal(this.src)">
+            <div class="card-body">
+              <h5>Shahar Diqqatga Sazovor Joylari</h5>
+              <p>Go'zal me'morchilik va manzaralar.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="300">
+          <div class="card">
+            <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400" class="modal-img" onclick="openImageModal(this.src)">
+            <div class="card-body">
+              <h5>Bolalar O'yin Maydoni</h5>
+              <p>Xavfsiz va qiziqarli bolalar hududi.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FACILITIES -->
+  <section class="facilities" id="facilities">
+    <h2 data-aos="fade-up">Bizning Imkoniyatlarimiz</h2>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="facility-item">
+            <i class="fas fa-wifi"></i>
+            <h5>Bepul WiFi</h5>
+            <p>Yuqori tezlikdagi internet</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="facility-item">
+            <i class="fas fa-swimming-pool"></i>
+            <h5>Suzish Havzasi</h5>
+            <p>Ichki va tashqi</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="facility-item">
+            <i class="fas fa-dumbbell"></i>
+            <h5>Fitness Markazi</h5>
+            <p>24/7 Kirish</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="facility-item">
+            <i class="fas fa-parking"></i>
+            <h5>Bepul Avtoturargoh</h5>
+            <p>Xavfsiz avtoturargoh</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="facility-item">
+            <i class="fas fa-utensils"></i>
+            <h5>Restoran</h5>
+            <p>Xalqaro oshxona</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="facility-item">
+            <i class="fas fa-spa"></i>
+            <h5>Spa & Wellness</h5>
+            <p>Dam oling va tetiklaning</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="facility-item">
+            <i class="fas fa-concierge-bell"></i>
+            <h5>Xona Xizmati</h5>
+            <p>24/7 Mavjud</p>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="facility-item">
+            <i class="fas fa-plane"></i>
+            <h5>Aeroport Transferi</h5>
+            <p>Bepul shuttle</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why-us" data-aos="fade-up">
+    <h1>Nima uchun <b>Bizni</b> tanlaysiz</h1>
+    <p class="description">Biz sizga sifatli dam olish imkonini yaratamiz.</p>
+
+    <div class="card">
+      <h3>Luks Qulaylik</h3>
+      <p>Zamonaviy, qulay va shinam xonalar.</p>
+    </div>
+
+    <div class="card">
+      <h3>Arzon Narxlar</h3>
+      <p>Byudjetga mos eng yaxshi xizmatlar.</p>
+    </div>
+
+    <div class="card">
+      <h3>Yuqori Reyting</h3>
+      <p>Mijozlar tomonidan eng yaxshi bahalangan mehmonxona.</p>
+    </div>
+  </section>
+
+  <!-- ROOMS CAROUSEL -->
+  <section id="rooms">
+    <h2 data-aos="fade-up">Bizning Xonalarimiz</h2>
+    
+    <div class="container">
+      <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          
+          <!-- Slide 1: Standard Room -->
+          <div class="carousel-item active">
+            <div class="room-card" data-aos="zoom-in">
+              <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600" alt="Standard Room">
+              <div class="card-body">
+                <h5>Standard Room</h5>
+                <div class="features">
+                  <i class="fas fa-bed"></i> 1 Queen Bed
+                  <i class="fas fa-user"></i> 2 Guests
+                  <i class="fas fa-wifi"></i> Bepul WiFi
+                </div>
+                <div class="price">$15.99 <small>/ kecha</small></div>
+                <a href="#contact" class="btn btn-dark">Bron Qilish</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Deluxe Room -->
+          <div class="carousel-item">
+            <div class="room-card" data-aos="zoom-in">
+              <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600" alt="Deluxe Room">
+              <div class="card-body">
+                <h5>Deluxe Room</h5>
+                <div class="features">
+                  <i class="fas fa-bed"></i> 1 King Bed
+                  <i class="fas fa-users"></i> 2-3 Guests
+                  <i class="fas fa-tv"></i> Smart TV
+                </div>
+                <div class="price">$25.99 <small>/ kecha</small></div>
+                <a href="#contact" class="btn btn-dark">Bron Qilish</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Junior Suite -->
+          <div class="carousel-item">
+            <div class="room-card" data-aos="zoom-in">
+              <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600" alt="Junior Suite">
+              <div class="card-body">
+                <h5>Junior Suite</h5>
+                <div class="features">
+                  <i class="fas fa-bed"></i> 1 King Bed
+                  <i class="fas fa-couch"></i> Mehmonxona
+                  <i class="fas fa-coffee"></i> Mini Bar
+                </div>
+                <div class="price">$35.99 <small>/ kecha</small></div>
+                <a href="#contact" class="btn btn-dark">Bron Qilish</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Suite -->
+          <div class="carousel-item">
+            <div class="room-card" data-aos="zoom-in">
+              <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600" alt="Suite">
+              <div class="card-body">
+                <h5>Suite</h5>
+                <div class="features">
+                  <i class="fas fa-bed"></i> King Bed + Sofa Bed
+                  <i class="fas fa-bath"></i> Jacuzzi
+                  <i class="fas fa-mountain"></i> Shahar Ko'rinishi
+                </div>
+                <div class="price">$45.99 <small>/ kecha</small></div>
+                <a href="#contact" class="btn btn-dark">Bron Qilish</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Family Room -->
+          <div class="carousel-item">
+            <div class="room-card" data-aos="zoom-in">
+              <img src="https://images.unsplash.com/photo-1596436889106-be35e843f974?w=600" alt="Family Room">
+              <div class="card-body">
+                <h5>Family Room</h5>
+                <div class="features">
+                  <i class="fas fa-bed"></i> 2 Queen Beds
+                  <i class="fas fa-users"></i> 4-5 Guests
+                  <i class="fas fa-gamepad"></i> Bolalar Hududi
+                </div>
+                <div class="price">$55.99 <small>/ kecha</small></div>
+                <a href="#contact" class="btn btn-dark">Bron Qilish</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: Executive Room -->
+          <div class="carousel-item">
+            <div class="room-card" data-aos="zoom-in">
+              <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600" alt="Executive Room">
+              <div class="card-body">
+                <h5>Executive Room</h5>
+                <div class="features">
+                  <i class="fas fa-bed"></i> King Bed + Office
+                  <i class="fas fa-briefcase"></i> Ish Stoli
+                  <i class="fas fa-concierge-bell"></i> VIP Xizmat
+                </div>
+                <div class="price">$65.99 <small>/ kecha</small></div>
+                <a href="#contact" class="btn btn-dark">Bron Qilish</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Oldingi</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Keyingi</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICE CALCULATOR -->
+  <section class="price-calculator" data-aos="fade-up">
+    <h3><i class="fas fa-calculator"></i> Narxni Hisoblang</h3>
+    <form id="priceForm">
+      <div class="mb-3">
+        <label class="form-label">Xona Turi</label>
+        <select class="form-control" id="roomType">
+          <option value="15.99">Standard Room - $15.99</option>
+          <option value="25.99">Deluxe Room - $25.99</option>
+          <option value="35.99">Junior Suite - $35.99</option>
+          <option value="45.99">Suite - $45.99</option>
+          <option value="55.99">Family Room - $55.99</option>
+          <option value="65.99">Executive Room - $65.99</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Kunlar Soni</label>
+        <input type="number" class="form-control" id="numDays" min="1" value="1">
+      </div>
+
+      <button type="button" class="btn btn-dark w-100" onclick="calculatePrice()">
+        <i class="fas fa-calculator"></i> Hisoblash
+      </button>
+    </form>
+
+    <div class="price-result" id="priceResult"></div>
+  </section>
+
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <h2 class="text-center mb-4" data-aos="fade-up">Biz bilan Bog'laning</h2>
+
+    <div class="row justify-content-center">
+      <div class="col-md-6" data-aos="fade-up">
+        <form class="p-4 rounded shadow-sm bg-white" id="contactForm">
+          <div class="mb-3">
+            <label class="form-label">Ismingiz *</label>
+            <input type="text" class="form-control" id="name" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email *</label>
+            <input type="email" class="form-control" id="email" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Telefon</label>
+            <input type="tel" class="form-control" id="phone">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Kelish Sanasi</label>
+            <input type="date" class="form-control" id="checkIn">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Ketish Sanasi</label>
+            <input type="date" class="form-control" id="checkOut">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Xabar</label>
+            <textarea rows="4" class="form-control" id="message"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-dark w-100">
+            <i class="fas fa-paper-plane"></i> Yuborish
+          </button>
+
+          <div class="form-message" id="formMessage"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <h2 data-aos="fade-up">Mijozlar Fikri</h2>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p>"Ajoyib mehmonxona! Xizmat a'lo darajada. Xonalar juda toza va qulay. Albatta qayta kelamiz!"</p>
+            <div class="author">- Alisher Karimov</div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p>"Oilam bilan ajoyib dam oldik. Bolalar maydonchalari va basseyn juda yaxshi. Tavsiya qilamiz!"</p>
+            <div class="author">- Dilnoza Rashidova</div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p>"Professional xodimlar, arzon narxlar va a'lo sifat. Eng yaxshi mehmonxona shaharda!"</p>
+            <div class="author">- Sardor Mahmudov</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <h3 data-aos="fade-up">Yangiliklardan Xabardor Bo'ling</h3>
+    <p data-aos="fade-up">Maxsus takliflar va chegirmalar haqida birinchilardan bo'lib bilib oling</p>
+    <form class="newsletter-form" data-aos="fade-up" id="newsletterForm">
+      <input type="email" placeholder="Email manzilingiz" required id="newsletterEmail">
+      <button type="submit"><i class="fas fa-envelope"></i> Obuna</button>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <h5>MyHotel</h5>
+          <p>Sizning eng yaxshi dam olish tanlovingiz</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <h5>Kontakt</h5>
+          <p><i class="fas fa-phone"></i> +998 71 123 45 67</p>
+          <p><i class="fas fa-envelope"></i> info@myhotel.uz</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <h5>Ijtimoiy Tarmoqlar</h5>
+          <p>
+            <a href="#" style="color: #ddd; margin: 0 10px; font-size: 20px;"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: #ddd; margin: 0 10px; font-size: 20px;"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: #ddd; margin: 0 10px; font-size: 20px;"><i class="fab fa-telegram"></i></a>
+          </p>
+        </div>
+      </div>
+      <hr style="border-color: #555;">
+      <p>&copy; 2025 MyHotel. Barcha huquqlar himoyalangan.</p>
+    </div>
+  </footer>
+
+  <!-- SCROLL TO TOP -->
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- CHAT WIDGET -->
+  <div class="chat-widget">
+    <div class="chat-button" onclick="toggleChat()">
+      <i class="fas fa-comments"></i>
+    </div>
+    <div class="chat-box" id="chatBox">
+      <div class="chat-header">
+        Onlayn Yordam
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <p>Salom! Sizga qanday yordam bera olaman?</p>
+      </div>
+      <div class="chat-input">
+        <input type="text" placeholder="Xabar yozing..." id="chatInput" onkeypress="handleChatKeypress(event)">
+        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE MODAL -->
+  <div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <img src="" id="modalImage" style="width: 100%; border-radius: 10px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- AOS Animation JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+
+    // Loading screen
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+      }, 1000);
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      // Scroll to top button
+      const scrollTop = document.getElementById('scrollTop');
+      if (window.scrollY > 300) {
+        scrollTop.classList.add('visible');
+      } else {
+        scrollTop.classList.remove('visible');
+      }
+    });
+
+    // Mobile menu toggle
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    function closeMenu() {
+      document.getElementById('navLinks').classList.remove('active');
+    }
+
+    // Scroll to top
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Price Calculator
+    function calculatePrice() {
+      const roomPrice = parseFloat(document.getElementById('roomType').value);
+      const numDays = parseInt(document.getElementById('numDays').value);
+      const total = (roomPrice * numDays).toFixed(2);
+      
+      document.getElementById('priceResult').innerHTML = 
+        `Jami narx: <strong>${total}</strong> (${numDays} kun)`;
+    }
+
+    // Contact Form
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      
+      if (name && email) {
+        const message = document.getElementById('formMessage');
+        message.textContent = 'Xabaringiz muvaffaqiyatli yuborildi! Tez orada siz bilan bog\'lanamiz.';
+        message.className = 'form-message success';
+        message.style.display = 'block';
+        
+        document.getElementById('contactForm').reset();
+        
+        setTimeout(() => {
+          message.style.display = 'none';
+        }, 5000);
+      }
+    });
+
+    // Newsletter Form
+    document.getElementById('newsletterForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('newsletterEmail').value;
+      
+      if (email) {
+        alert('Obuna bo\'ldingiz! E-mail: ' + email);
+        document.getElementById('newsletterEmail').value = '';
+      }
+    });
+
+    // Chat Widget
+    function toggleChat() {
+      document.getElementById('chatBox').classList.toggle('active');
+    }
+
+    function handleChatKeypress(event) {
+      if (event.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (message) {
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML += `<p style="text-align: right; color: #c19a6b;"><strong>Siz:</strong> ${message}</p>`;
+        
+        input.value = '';
+        
+        setTimeout(() => {
+          chatMessages.innerHTML += `<p><strong>Operator:</strong> Xabaringiz uchun rahmat! Tez orada javob beramiz.</p>`;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 1000);
+      }
+    }
+
+    // Image Modal
+    function openImageModal(src) {
+      document.getElementById('modalImage').src = src;
+      new bootstrap.Modal(document.getElementById('imageModal')).show();
+    }
+
+
+    // Set minimum date for check-in (today)
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('checkIn').setAttribute('min', today);
+    
+    // Update checkout min date based on check-in
+    document.getElementById('checkIn').addEventListener('change', function() {
+      document.getElementById('checkOut').setAttribute('min', this.value);
+    });
+  </script>
+
+</body>
+</html>
